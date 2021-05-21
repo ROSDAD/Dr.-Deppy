@@ -18,24 +18,27 @@
     </h2>
   </div>
   <div class="address">
-    <i class="fas fa-smile"></i>
-    <h2>
-      Roshnee Matlani
+  <h5  style="position:relative;top:-20px;">Name</h5>
+    
+    <h2 style="position:relative;top:-15px;">
+      {{ uname }}
     </h2>
-    <h2>
-      20
-    </h2>
+    
   </div>
-  <div class="phone">
-    <i class="fas fa-phone-alt"></i>
-    <h2>
-      757 287 1608
-    </h2>
-  </div>
+  
   <div class="email">
-    <i class="fas fa-envelope"></i>
-    <h2>
-      roshneematlani21@gmail.com
+    <h5  style="position:relative;top:-20px;">Overall Happiness</h5>
+    <h2 style="position:relative;top:-15px;">
+      {{ overallhap }}%
+    </h2>
+    
+  </div>
+  
+  <div class="phone">
+  <h5  style="position:relative;top:-20px;">Email</h5>
+   
+    <h2 style="position:relative;top:-15px;">
+      {{ uemail }}
     </h2>
   </div>
 
@@ -47,7 +50,7 @@
     <div class="sessions" style="padding-left: 20px; padding-top: 30px;">
     <h3>Your recent Session-</h3>
     <br>
-     <p>14th May 2021</p>
+     <p>{{ date }}</p>
      <br>
     <h3>Past Records-</h3>
     <br>
@@ -61,11 +64,15 @@
     </tr>
   </thead>
   <tbody>
+  {% for i in sentiments %}
+              
+           
     <tr>
-      <th scope="row">1</th>
-      <td style="text-align: center;">Session 1</td>
-      <td style="text-align: center;">40.5%</td>
+      <th scope="row">{{ i.sessionno }}</th>
+      <td style="text-align: center;">Session {{i.sessionno}}</td>
+      <td style="text-align: center;">{{i.sentiment}}</td>
     </tr>
+    {% endfor %}
     {% comment %} <tr>
       <th scope="row">2</th>
      <td style="text-align: center;">Session 1</td>

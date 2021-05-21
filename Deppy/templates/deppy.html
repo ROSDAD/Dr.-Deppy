@@ -37,11 +37,11 @@
    <div id="mainListDiv" class="main_list" style="width:100vw;background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/38816/image-from-rawpixel-id-2042508-jpeg.jpg')no-repeat center fixed; background-position: center top; background-size:cover;height:200%" >
 		<ul class="navlinks"  style="width:100vw;">
 			<li style="padding-left:20px;"><a href="/profile" style="font-size:25px">Profile</a></li>
-			<li style="padding-left:20px;"><a href="#" style="font-size:25px">Services</a></li>
+			{% comment %} <li style="padding-left:20px;"><a href="#" style="font-size:25px">Services</a></li>
 			<li style="padding-left:20px;"><a href="#" data-toggle="modal" data-target="#myModal1" style="font-size:25px;">Contact</a></li>
 			<li style="padding-left:20px;"><a href="#" data-toggle="modal" data-target="#myModal" style="font-size:25px">About</a></li>
-			<li style="padding-left:20px;"><a href="#" data-toggle="modal" data-target="#myModal2" style="font-size:25px">Team</a></li>
-			<form>{% csrf_token %}<li style="position:relative;float:right;"><a id="logoutbtn" href="#" style="font-size:25px" >Logout</a></li></form>
+			<li style="padding-left:20px;"><a href="#" data-toggle="modal" data-target="#myModal2" style="font-size:25px">Team</a></li> {% endcomment %}
+			<form>{% csrf_token %}<li style="position:relative;float:right;left:200px;"><a id="logoutbtn" href="#" style="font-size:25px" >Logout</a></li></form>
 		</ul>
 	</div> 
 	
@@ -288,7 +288,7 @@
 					<a href="#">Contact</a>
 				</p>
 
-				<p class="footer-company-name">© 2019 Deppy Pvt. Ltd.</p>
+				<p class="footer-company-name">© 2020 Deppy Pvt. Ltd.</p>
 			</div>
 
 			<div class="footer-center">

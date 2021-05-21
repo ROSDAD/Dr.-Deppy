@@ -24,8 +24,12 @@ import pandas as pd
 import json
 import ijson 
 from .models import Users
-from .models import Chats
-
+from .models import Chats,Sentiments
+from textblob import TextBlob
+import secrets
+import string
+from datetime import date
+N = 20
 
 data = pd.read_json('deppy/intents_2.json')
 #with open('intents.json', encoding='utf-8') as f:
@@ -142,6 +146,7 @@ def chatpost(request):
         obj.email = request.session['email']
         obj.inpchat = message
         obj.replychat = chatreply
+        obj.sessionuid = request.session['suid']
         obj.save()
         return HttpResponse(chatreply)
 def signup(request):
@@ -166,13 +171,24 @@ def signup(request):
             
             obj = Users.objects.all().filter(email=email)
             if len(obj) == 0:
+                
                 users = Users()
                 users.name = uname
                 users.email = email
                 users.password = signuppass
 
                 users.save()
+                res = ''.join(secrets.choice(string.ascii_uppercase + string.digits)for i in range(N))
+                request.session['suid']=res
+                sentiments = Sentiments.objects.all().filter(email=email)
+                sessionno=len(sentiments)+1
+                obj = Sentiments()
+                obj.sessionno = sessionno
+                obj.email = email
                 
+                obj.sessionuid = res
+                obj.save()
+                request.session['uname'] = uname
                 request.session['email'] = email
                 
             return redirect("/")
@@ -190,7 +206,18 @@ def signin(request):
             return render(request,"login.html") 
         user = Users.objects.all().filter(email=uemail,password=password)
         if len(user) != 0:
-            
+            res = ''.join(secrets.choice(string.ascii_uppercase + string.digits)for i in range(N))
+            request.session['suid']=res
+            sentiments = Sentiments.objects.all().filter(email=uemail)
+            sessionno=len(sentiments)+1
+            obj = Sentiments()
+            obj.sessionno = sessionno
+            obj.email = uemail
+           
+            obj.sessionuid = res
+            obj.save()
+            user = Users.objects.get(email=uemail,password=password)
+            request.session['uname'] = user.name
             request.session['email'] = uemail
         return redirect("/")
             
@@ -199,11 +226,41 @@ def logout(request):
     if request.method == "POST":
         if request.POST['action']=="logout":
             del request.session['email']
-            
+            del request.session['suid']
+            del request.session['uname']
             return HttpResponse("logoutsuccessful")
 def showprofile(request):
     if request.session.get('email', None):
-        return render(request,"profile.html")
+        sentiments = Sentiments.objects.all().filter(email=request.session['email'],sentiment="NA")
+         
+        for i in range(len(sentiments)):
+            
+            sentarr = []
+
+            chats = Chats.objects.all().filter(sessionuid=sentiments[i].sessionuid)
+            if len(chats)>0:
+                for j in range(len(chats)):
+                    
+                    sentarr.append(TextBlob(chats[j].inpchat).sentiment.polarity)
+                    
+                sent = float(sum(sentarr))/len(sentarr)
+            else:
+                sent="NA"
+            obj = Sentiments.objects.get(sessionuid=sentiments[i].sessionuid)
+            obj.sentiment = str(sent)
+            obj.save()
+        sentiments = Sentiments.objects.all().filter(email=request.session['email'])
+        sent = sentiments
+        overhap = []
+        for i in sent:
+            if i.sentiment !="NA":
+                senttemp = '{0:.2f}'.format(float(i.sentiment)*100)
+                i.sentiment = senttemp
+                overhap.append(float(i.sentiment))
+                i.sentiment = senttemp+"%"
+        
+        overallhap = '{0:.2f}'.format(float(sum(overhap))/len(overhap))
+        return render(request,"profile.html",{"sentiments":sent,"uname":request.session['uname'],"uemail":request.session['email'],"date":date.today(),"overallhap":overallhap})
     else:
         return render(request,"login.html")
         
